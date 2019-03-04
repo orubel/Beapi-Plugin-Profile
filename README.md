@@ -14,4 +14,4 @@ Yopu can then build local projects like so:
 grails create-app <name of your app> --profile beapi
 ```
 
-This builds all necessary dependencies into your application. The only thing left is to follows direction for configuration.
+This builds all necessary dependencies into your application. The only thing left is to follows direction for [configuration](https://www.beapi.io/installation).
