@@ -1,0 +1,53 @@
+description: Profile for API Applications using BEAPI Framework
+features:
+    defaults:
+        - hibernate
+build:
+    repositories:
+        - "http://dl.bintray.com/orubel/plugins"
+        - "https://repo.grails.org/grails/core"
+    plugins:
+        - org.grails.grails-web
+    excludes:
+        - org.grails.grails-core
+repositories:
+        - "http://dl.bintray.com/orubel/plugins"
+        - "https://repo.grails.org/grails/core"
+dependencies:
+    provided:
+        - "org.grails.plugins:cache:4.0.0"
+        - "org.grails:grails-logging"
+        - "org.grails:grails-plugin-i18n"
+        - "org.grails:grails-plugin-services"
+        - "org.grails:grails-plugin-interceptors"
+        - "org.grails.plugins:converters:3.3.1"
+        - "org.grails.plugins:events"
+        - "org.grails:grails-web"
+        - "org.codehaus.gpars:gpars:1.2.1"
+        - "org.codehaus.groovy:groovy-ant"
+        - "org.springframework.boot:spring-boot-starter-tomcat"
+        - "org.grails.plugins:hibernate5"
+        - "org.hibernate:hibernate-core:5.1.5.Final"
+        - "org.hibernate:hibernate-ehcache:5.1.5.Final"
+        - "com.h2database:h2"
+        - "org.grails.plugins:spring-security-core:3.2.0.M1"
+        - "com.google.guava:guava:14.0"
+    compile:
+        - "org.grails.plugins:api-framework:0.9.7"
+        - "org.grails.plugins:async"
+        - "org.springframework.boot:spring-boot-starter-logging"
+        - "org.springframework.boot:spring-boot-autoconfigure"
+        - "org.grails.plugins:spring-security-rest:2.0.0.M2"
+        - "org.grails:grails-plugin-rest"
+        - "org.grails.plugins:spring-security-rest-gorm:2.0.0.M2"
+    runtime:
+        - "org.apache.tomcat:tomcat-jdbc"
+    testCompile:
+        - "org.grails.plugins:geb"
+        - "org.grails:grails-plugin-testing"
+        - "org.grails:grails-gorm-testing-support:1.1.4"
+        - "org.grails:grails-web-testing-support:1.1.4"
+        - "net.sourceforge.htmlunit:htmlunit:2.18"
+        - "org.codehaus.groovy.modules.http-builder:http-builder:0.7.1"
+        - "org.grails:grails-datastore-rest-client:4.0.4.RELEASE"
+

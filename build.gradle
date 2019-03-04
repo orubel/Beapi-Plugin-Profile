@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://repo.grails.org/grails/core" }
+    }
+    dependencies {
+        classpath "org.grails:grails-gradle-plugin:${project.grailsVersion}"
+    }
+}
+
+apply plugin: "org.grails.grails-profile"
+apply plugin: "org.grails.grails-profile-publish"
+
+group 'org.grails.profiles'
+version '1.0.0-SNAPSHOT'
+
+grailsPublish {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    githubSlug = 'orubel/Beapi-Plugin-Profile'
+    license {
+        name = 'MIT'
+    }
+    title = "BeAPI API Framework"
+    desc = "BeAPI API Framework is a fully reactive plug-n-play API Framework for Distributed Architectures providing api abstraction, cached IO state, automated batching and more. It is meant to autmoate alot of the issues behind setting up and maintaining API's in distributed architectures as well as handling and simplifying automation."
+    developers = [orubel:"Owen Rubel"]
+}
+
+repositories {
+    mavenLocal()
+    maven { url "https://repo.grails.org/grails/core" }
+}  
+
+dependencies {
+    runtime "org.grails.profiles:base:3.3.0.RC1"
+}
