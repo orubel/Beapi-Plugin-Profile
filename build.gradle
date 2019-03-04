@@ -29,10 +29,4 @@ grailsPublish {
 repositories {
     mavenLocal()
     maven { url "https://repo.grails.org/grails/core" }
-}  
-
-dependencies {
-    runtime "org.grails.profiles:base:3.3.0.RC1"
-    //runtime project(':plugin')
-    //runtime project(':web')
 }
