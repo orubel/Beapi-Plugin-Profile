@@ -1,0 +1,23 @@
+package net.nosegrind.apiframework
+
+class Throttle implements Serializable {
+
+	Long timestamp = System.nanoTime()
+	String currentData
+	boolean locked = false
+	Long expires
+
+
+	static constraints = {
+		timestamp blank: false
+		currentData blank: false
+		locked blank: false
+		expires blank: false
+	}
+
+	static mapping = {
+		datasource 'ratelimit'
+		cache true
+	}
+
+}

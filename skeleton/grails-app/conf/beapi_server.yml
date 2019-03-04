@@ -1,0 +1,77 @@
+grails:
+    tomcat:
+        jvmArgs:
+            -'-Xms2048m'
+            -'-Xmx4096m'
+            -'-XX:PermSize=256m'
+            -'-XX:MaxPermSize=512m'
+            -'-XX:+CMSClassUnloadingEnabled'
+            -'-XX:+UseConcMarkSweepGC'
+            -'-XX:+CMSIncrementalMode'
+            -'-XX:+CMSIncrementalPacing'
+            -'-XX:CMSIncrementalDutyCycle=10'
+            -'-XX:+UseParNewGC'
+            -'-XX:MaxGCPauseMillis=250'
+            -'-XX:MaxGCMinorPauseMillis=100'
+            -'-server'
+
+---
+environments:
+    test:
+        webhookActive: false
+        apiThrottle: false
+        postProcess: false
+        iostate:
+            preloadDir: '.beapi/.iostate'
+            archInstanceUrls:
+                proxy: "127.0.0.1"
+                mq: "127.0.0.1"
+        server:
+            context-path: ''
+            port: 8080
+        grails:
+            serverURL: "http://test.yourdomain.net:8080" #changeit
+    development:
+        webhookActive: false
+        apiThrottle: false
+        postProcess: false
+        iostate:
+            preloadDir: '.beapi/.iostate'
+            archInstanceUrls:
+                proxy: "127.0.0.1"
+                mq: "127.0.0.1"
+        server:
+            context-path: ''
+            port: 8080
+        grails:
+            serverURL: "http://test.yourdomain.net:8080" #changeit
+    production:
+        webhookActive: false
+        apiThrottle: false
+        postProcess: false
+        iostate:
+            preloadDir: '.beapi/.iostate'
+            archInstanceUrls:
+                proxy: "127.0.0.1"
+                mq: "127.0.0.1"
+        server:
+            context-path: ''
+            port: 8080
+        grails:
+            serverURL: "http://test.yourdomain.net:8080" #changeit
+
+---
+server:
+    tomcat:
+        backgroundProcessorDelay: 10
+        maxThreads: 500
+        uriEncoding: UTF-8
+        compression: off
+        compressableMimeTypes: application/json,text/json,application/xml,text/xml,text/plain
+    use-forward-headers: true
+    port: 8443                                  # The port to listen on
+    ssl:
+        enabled: true                           # Activate HTTPS mode on the server port
+        keyStore: /home/your_home_directory/.ssh/keystore.jks         # e.g. /etc/tomcat7/keystore/tomcat.keystore
+        keyStorePassword: yabbadabbadoo      # e.g. changeit
+        keyAlias: selfsigned                   # e.g. tomcat

@@ -8,8 +8,6 @@ build:
         - "https://repo.grails.org/grails/core"
     plugins:
         - org.grails.grails-web
-    excludes:
-        - org.grails.grails-core
 repositories:
         - "http://dl.bintray.com/orubel/plugins"
         - "https://repo.grails.org/grails/core"
@@ -50,4 +48,7 @@ dependencies:
         - "net.sourceforge.htmlunit:htmlunit:2.18"
         - "org.codehaus.groovy.modules.http-builder:http-builder:0.7.1"
         - "org.grails:grails-datastore-rest-client:4.0.4.RELEASE"
-
+skeleton:
+    excludes:
+        - grails-app/conf/application.yml
+        - grails-app/init/$appName

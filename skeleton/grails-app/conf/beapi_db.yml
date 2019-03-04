@@ -1,0 +1,98 @@
+hibernate:
+    flush:
+        mode: COMMIT
+    cache:
+        use_second_level_cache: true
+        use_query_cache: true
+        provider_class: 'org.hibernate.cache.EhCacheProvider'
+        region.factory_class: 'org.hibernate.cache.ehcache.EhCacheRegionFactory'
+
+---
+environments:
+    test:
+        dataSource:
+            pooled: true
+            jmxExport: true
+            driverClassName: "com.mysql.jdbc.Driver"
+            dialect: "org.hibernate.dialect.MySQL5InnoDBDialect"
+            username: "root"
+            password: "db_password"
+            # dbCreate: "create-drop"
+            url: "jdbc:mysql://localhost:3306/testdb"
+            dbCreate: update
+            properties:
+                   jmxEnabled: true
+                   initialSize: 5
+                   maxActive: 50
+                   minIdle: 5
+                   maxIdle: 25
+                   maxWait: 10000
+                   maxAge: 600000
+                   timeBetweenEvictionRunsMillis: 5000
+                   minEvictableIdleTimeMillis: 60000
+                   validationQuery: "SELECT 1"
+                   validationQueryTimeout: 3
+                   validationInterval: 15000
+                   testOnBorrow: true
+                   testWhileIdle: true
+                   testOnReturn: false
+                   jdbcInterceptors: "ConnectionState"
+                   defaultTransactionIsolation: 2 # "java.sql.Connection.TRANSACTION_READ_COMMITTED"
+    development:
+        dataSource:
+            pooled: true
+            jmxExport: true
+            driverClassName: "com.mysql.jdbc.Driver"
+            dialect: "org.hibernate.dialect.MySQL5InnoDBDialect"
+            username: "root"
+            password: "db_password"
+            # dbCreate: "create-drop"
+            url: "jdbc:mysql://localhost:3306/testdb"
+            dbCreate: update
+            properties:
+                   jmxEnabled: true
+                   initialSize: 5
+                   maxActive: 50
+                   minIdle: 5
+                   maxIdle: 25
+                   maxWait: 10000
+                   maxAge: 600000
+                   timeBetweenEvictionRunsMillis: 5000
+                   minEvictableIdleTimeMillis: 60000
+                   validationQuery: "SELECT 1"
+                   validationQueryTimeout: 3
+                   validationInterval: 15000
+                   testOnBorrow: true
+                   testWhileIdle: true
+                   testOnReturn: false
+                   jdbcInterceptors: "ConnectionState"
+                   defaultTransactionIsolation: 2 # "java.sql.Connection.TRANSACTION_READ_COMMITTED"
+    production:
+        dataSource:
+            pooled: true
+            jmxExport: true
+            driverClassName: "com.mysql.jdbc.Driver"
+            dialect: "org.hibernate.dialect.MySQL5InnoDBDialect"
+            username: "root"
+            password: "db_password"
+            # dbCreate: "create-drop"
+            url: "jdbc:mysql://localhost:3306/testdb"
+            dbCreate: update
+            properties:
+                   jmxEnabled: true
+                   initialSize: 5
+                   maxActive: 50
+                   minIdle: 5
+                   maxIdle: 25
+                   maxWait: 10000
+                   maxAge: 600000
+                   timeBetweenEvictionRunsMillis: 5000
+                   minEvictableIdleTimeMillis: 60000
+                   validationQuery: "SELECT 1"
+                   validationQueryTimeout: 3
+                   validationInterval: 15000
+                   testOnBorrow: true
+                   testWhileIdle: true
+                   testOnReturn: false
+                   jdbcInterceptors: "ConnectionState"
+                   defaultTransactionIsolation: 2 # "java.sql.Connection.TRANSACTION_READ_COMMITTED"

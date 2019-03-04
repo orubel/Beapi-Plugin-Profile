@@ -1,0 +1,180 @@
+import org.grails.gradle.plugin.commands.*
+
+buildscript {
+    ext {
+        grailsVersion = project.grailsVersion
+    }
+    repositories {
+        flatDir {
+            dirs 'lib'
+        }
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://repo.grails.org/grails/core" }
+
+        // for installing local
+        maven { url "${System.getProperty('user.home')}/.m2/repository" }
+        // bintray
+        maven { url "http://dl.bintray.com/orubel/plugins" }
+        jcenter {
+            url "http://jcenter.bintray.com/"
+        }
+    }
+    dependencies {
+        classpath group: 'org.codehaus.gpars', name: 'gpars', version: '1.2.1'
+        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
+
+        // for installing local
+        classpath 'org.grails.plugins:api-framework:0.9.7'
+    }
+}
+
+plugins {
+    id "io.spring.dependency-management" version "0.6.0.RELEASE"
+    //id "com.jfrog.bintray" version "1.7.3"
+}
+
+version "0.1"
+group "@grails.app.group@"
+
+apply plugin: "org.springframework.boot"
+apply plugin: "org.grails.grails-web"
+
+
+task generateIostateCommand(type: ApplicationContextCommandTask) {
+    classpath =  project.sourceSets.main.runtimeClasspath + project.configurations.console
+    command = "generate-iostate"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+ext {
+    grailsVersion = project.grailsVersion
+    gradleWrapperVersion = project.gradleWrapperVersion
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://repo.grails.org/grails/core" }
+    maven { url "${System.getProperty('user.home')}/.m2/repository/" }
+    maven { url "http://dl.bintray.com/orubel/plugins" }
+    jcenter {
+        url "http://jcenter.bintray.com/"
+    }
+}
+
+//dependencyManagement {
+//    imports {
+//        mavenBom "org.grails:grails-bom:$grailsVersion"
+//    }
+//    applyMavenExclusions false
+//}
+
+bootRun {
+    systemProperties = System.properties
+}
+
+test {
+    systemProperties = System.properties
+}
+
+
+
+dependencies {
+    /**
+     * API Block
+     */
+    compile 'org.grails.plugins:api-framework:0.9.7'
+    //compile group: 'org.scribe', name: 'scribe', version: '1.3.7'
+
+    /**
+     * MVC Support Block
+     */
+    provided 'org.grails.plugins:cache:4.0.0'
+    compile "org.grails.plugins:async"
+    provided "org.grails:grails-logging"
+    provided "org.grails:grails-plugin-i18n"
+    provided "org.grails:grails-plugin-services"
+    provided "org.grails:grails-plugin-interceptors"
+    provided 'org.grails.plugins:converters:3.3.1'
+    provided "org.grails.plugins:events"
+    provided('org.grails:grails-web')
+
+    /**
+     * Application Server
+     */
+    runtime "org.apache.tomcat:tomcat-jdbc"
+
+    /**
+     * Parallelization Block
+     */
+    provided 'org.codehaus.gpars:gpars:1.2.1', {
+        exclude group:'org.multiverse', module:'multiverse-core'
+        exclude group:'org.codehaus.groovy', module: 'groovy-all'
+    }
+    provided("org.codehaus.groovy:groovy-ant:${groovyVersion}")
+
+    /**
+     * SpringBoot Block
+     */
+    compile "org.springframework.boot:spring-boot-starter-logging"
+    provided 'org.springframework.boot:spring-boot-starter-tomcat'
+    compile "org.springframework.boot:spring-boot-autoconfigure"
+
+
+    /**
+     * DB Block
+     */
+    provided "org.grails.plugins:hibernate5"
+    provided "org.hibernate:hibernate-core:5.1.5.Final"
+    provided "org.hibernate:hibernate-ehcache:5.1.5.Final"
+    //provided 'org.grails.plugins:hibernate:4.3.10.6'
+    //provided "org.hibernate:hibernate-ehcache"
+    runtime 'mysql:mysql-connector-java:5.1.29'
+    provided("com.h2database:h2")
+
+    /**
+     * Security block
+     */
+    provided('org.grails.plugins:spring-security-core:3.2.0.M1')
+    compile('org.grails.plugins:spring-security-rest:2.0.0.M2')
+    // required by spring-security-rest for loginController/logoutController
+    compile "org.grails:grails-plugin-rest"
+    compile('org.grails.plugins:spring-security-rest-gorm:2.0.0.M2'){
+        exclude module: 'org.grails.plugins:spring-security-rest:2.0.0.M2'
+    }
+    provided group: 'com.google.guava', name: 'guava', version: '14.0'
+
+    /**
+     * Test Block
+     */
+    testCompile "org.grails.plugins:geb"
+    testCompile "org.grails:grails-plugin-testing"
+    testCompile "org.grails:grails-gorm-testing-support:1.1.4"
+    testCompile "org.grails:grails-web-testing-support:1.1.4"
+    testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
+    testCompile('org.codehaus.groovy.modules.http-builder:http-builder:0.7.1') {
+        exclude module: "commons-logging"
+        exclude module: "xml-apis"
+        exclude module: "groovy"
+    }
+    testCompile "org.grails:grails-datastore-rest-client:4.0.4.RELEASE"
+    console "org.grails:grails-console"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleWrapperVersion
+}
+
+bootRun {
+    systemProperties = System.properties
+}
+
+generateIostateCommand {
+    systemProperties = System.properties
+}
+
+
