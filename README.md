@@ -15,3 +15,9 @@ grails create-app <name of your app> --profile beapi
 ```
 
 This builds all necessary dependencies into your application. The only thing left is to follows direction for [configuration](https://www.beapi.io/installation).
+
+This is also available from the grails profiles repo (without doing the build):
+
+```
+grails create-app myapp --profile org.grails.profiles:beapi:1.0.0
+```
