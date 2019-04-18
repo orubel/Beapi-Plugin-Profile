@@ -4,6 +4,7 @@ apitoolkit:
     procCores: 8
     roles: ['ROLE_USER','ROLE_ROOT','ROLE_ADMIN','ROLE_ARCH']
     views: ['admin','apidoc','api','login','logout']
+    apiServer: ['http://localhost:8080']
     apichain:
         limit: 3
     rest:

@@ -11,7 +11,7 @@ class AcctPersonController {
 	TokenGenerator tokenGenerator
 
 	// in an example like this with multiple keys, they need to be set as 'eager fetched' in domain object
-	LinkedHashMap list(){
+	HashMap list(){
 		try{
 			Person person
 
@@ -48,7 +48,7 @@ class AcctPersonController {
 		}
 	}
 
-	LinkedHashMap show(){
+	HashMap show(){
 		try {
 			// double check against person
 			AcctPerson acctPerson
@@ -70,7 +70,7 @@ class AcctPersonController {
 		}
 	}
 
-	LinkedHashMap create(){
+	HashMap create(){
 		try{
 			Account.withTransaction { status ->
 				Account acct = Account.get(params.acct_id.toLong())
@@ -122,7 +122,7 @@ class AcctPersonController {
 	}
 */
 
-	LinkedHashMap delete() {
+	HashMap delete() {
 		try {
 			// double check against person
 			AcctPerson acct = AcctPerson.get(params.id?.toLong())

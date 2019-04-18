@@ -7,7 +7,7 @@ class ApplicationController {
 	
 	def springSecurityService
 
-	LinkedHashMap list() {
+	HashMap list() {
 		Account acct = Account.get(params?.acct?.toLong())
 		if (acct) {
 			def result = Application.findAllByAcct(acct)
@@ -15,7 +15,7 @@ class ApplicationController {
 		}
 	}
 
-	LinkedHashMap create(){
+	HashMap create(){
 		AcctPerson acctPerson = AcctPerson.getByPersonAndOwner(springSecurityService.principal.id, true)
 		if(acctPerson) {
 			Application.withTransaction { status ->
@@ -37,7 +37,7 @@ class ApplicationController {
 		}
 	}
 
-	LinkedHashMap show(){
+	HashMap show(){
 		try{
 			Application app = Application.get(params?.id?.toLong())
 			Person person = Person.get(springSecurityService.principal.id)
@@ -52,7 +52,7 @@ class ApplicationController {
     }
 
 
-	LinkedHashMap delete() {
+	HashMap delete() {
 		try {
 			Application app
 			if(isSuperuser()) {

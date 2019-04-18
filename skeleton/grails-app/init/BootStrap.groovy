@@ -38,6 +38,9 @@ class BootStrap {
             Role adminRole = Role.findByAuthority("ROLE_ADMIN")
 
             if(!user?.id){
+                //println(grailsApplication.config.root.login)
+                //println(grailsApplication.config.root.password)
+                //println(grailsApplication.config.root.email)
                 user = new Person(username:"${grailsApplication.config.root.login}",password:"${grailsApplication.config.root.password}",email:"${grailsApplication.config.root.email}")
 
                 if(!user.save(flush:true)){

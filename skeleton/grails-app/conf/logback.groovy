@@ -31,5 +31,4 @@ if(targetDir) {
     logger("org.springframework.security", ERROR, ['STDOUT','FULL_STACKTRACE'])
     logger("grails.plugin.springsecurity", ERROR, ['STDOUT','FULL_STACKTRACE'])
     logger("org.pac4j", DEBUG, ['STDOUT'], false)
-
 }

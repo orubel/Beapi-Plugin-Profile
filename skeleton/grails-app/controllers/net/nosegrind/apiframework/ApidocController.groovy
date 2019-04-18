@@ -7,30 +7,29 @@ import grails.util.Metadata
 class ApidocController {
 
 	def apiCacheService
+	def springSecurityService
 	
 	def index(){
 		redirect(action:'show')
 	}
 
-	LinkedHashMap show(){
-		Map docs = [:]
-		
-		grailsApplication.controllerClasses.each { DefaultGrailsControllerClass controllerClass ->
-			String controllername = controllerClass.logicalPropertyName
+	HashMap show(){
+		HashMap docs = [:]
+		List cacheKeys = apiCacheService.getCacheKeys()
 
-			def cache = apiCacheService.getApiCache(controllername)
-
+		String authority = springSecurityService.principal.authorities*.authority[0]
+		cacheKeys.each(){
+			def cache = apiCacheService.getApiCache(it)
 			if(cache){
-				cache[params.apiObject].each() { it ->
-					if (!['deprecated', 'defaultAction', 'currentStable'].contains(it.key)) {
-						if(!docs["${controllername}"]){
-							docs["${controllername}"] =[:]
+				String version = cache['currentStable']['value']
+				cache[version].each() { k, v ->
+
+					if (!['deprecated', 'defaultAction','currentStable'].contains(k)) {
+						if(!docs["${it}"] && (cache[version][k]['roles'].contains(authority) || cache[version][k]['roles'].contains('permitAll'))){
+							docs["${it}"] = v['doc']
 						}
-						String action = it.key
-						docs["${controllername}"]["${action}"] = cache[params.apiObject][action]['doc']
 					}
 				}
-			}else{
 
 			}
 		}

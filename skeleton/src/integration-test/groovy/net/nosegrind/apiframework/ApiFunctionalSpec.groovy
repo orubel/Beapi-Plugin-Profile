@@ -70,7 +70,7 @@ class ApiFunctionalSpec extends Specification {
                 }
             }
             data += "}"
-
+        
             def info
 
             def proc = ["curl", "-H", "Content-Type: application/json", "-H", "Authorization: Bearer ${this.token}", "--request", "${METHOD}", "-d", "${data}", "${this.testDomain}/${this.appVersion}/${this.controller}/${action}"].execute();
@@ -106,7 +106,7 @@ class ApiFunctionalSpec extends Specification {
 
             Integer version = cache['cacheversion']
             String action = 'show'
-            String pkey = cache?."${version}"?."${action}".pkey[0]
+            //String pkey = cache?."${version}"?."${action}".pkey[0]
 
             def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${this.controller}/show?id=${this.currentId}"].execute();
             proc.waitFor()
@@ -129,6 +129,38 @@ class ApiFunctionalSpec extends Specification {
             }
     }
 
+    void "GET api call with version: [domain object]"() {
+        setup:"api is called"
+        String METHOD = "GET"
+        LinkedHashMap info = [:]
+        ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
+        LinkedHashMap cache = apiCacheService.getApiCache(this.controller)
+
+        Integer version = cache['cacheversion']
+        String action = 'show'
+        //String pkey = cache?."${version}"?."${action}".pkey[0]
+
+        def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}-1/${this.controller}/show?id=${this.currentId}"].execute();
+        proc.waitFor()
+        def outputStream = new StringBuffer()
+        proc.waitForProcessOutput(outputStream, System.err)
+        String output = outputStream.toString()
+
+        def slurper = new JsonSlurper()
+        slurper.parseText(output).each(){ k,v ->
+            info[k] = v
+        }
+        when:"info is not null"
+        assert info!=[:]
+        then:"get user"
+        cache?."${version}"?."${action}".returns.each(){ k,v ->
+            assert this.authorities.contains(k)
+            v.each(){ it ->
+                assert info."${it.name}" != null
+            }
+        }
+    }
+
     // test list of domain objects
     void "GET list api call: [list of domain objects]"() {
         setup:"api is called"
@@ -141,7 +173,7 @@ class ApiFunctionalSpec extends Specification {
 
             String action = 'show'
 
-            String pkey = cache?."${version}"?."${action}".pkey[0]
+            //String pkey = cache?."${version}"?."${action}".pkey[0]
 
             def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${this.controller}/list"].execute();
             proc.waitFor()

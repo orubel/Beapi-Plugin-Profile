@@ -85,6 +85,7 @@ class BatchFunctionalSpec extends Specification {
             assert this.currentId.size()==6
     }
 
+
     void "CREATE api call - No Concatenation"() {
         setup:"api is called"
             String METHOD = "POST"
@@ -111,6 +112,47 @@ class BatchFunctionalSpec extends Specification {
             assert this.currentId.size()==7
     }
 
+    // create using mockdata
+    void "GET api call"() {
+        List localId = []
+        setup:"api is called"
+            String METHOD = "GET"
+
+            ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
+            LinkedHashMap cache = apiCacheService.getApiCache(this.controller)
+            Integer version = cache['cacheversion']
+            String action = 'show'
+
+            String data = "{\"combine\":true,\"batch\":["
+            int inc = 1
+            int size = this.currentId.size()
+            this.currentId.each(){
+                data += "{\"id\":${it}}"
+                inc++
+                if(inc<=size){
+                    data += ","
+                }
+            }
+            data += "]}"
+
+            def info
+            def proc = ["curl", "-H", "Content-Type: application/json", "-H", "Authorization: Bearer ${this.token}", "--request", "${METHOD}", "-d", "${data}", "${this.testDomain}/${this.appVersion}/${this.controller}/show"].execute();
+            proc.waitFor()
+            def outputStream = new StringBuffer()
+            proc.waitForProcessOutput(outputStream, System.err)
+            String output = outputStream.toString()
+
+            info = new JsonSlurper().parseText(output)
+
+        when:"info is not null"
+            assert info!=null
+        then:"get created user"
+            info.each { it ->
+                def out = new JsonSlurper().parseText(it)
+                localId.add(out.id)
+            }
+            assert localId.size()==this.currentId.size()
+    }
 
     // create using mockdata
     void "DELETE api call"() {
@@ -140,6 +182,7 @@ class BatchFunctionalSpec extends Specification {
             def outputStream = new StringBuffer()
             proc.waitForProcessOutput(outputStream, System.err)
             String output = outputStream.toString()
+
             info = new JsonSlurper().parseText(output)
 
         when:"info is not null"

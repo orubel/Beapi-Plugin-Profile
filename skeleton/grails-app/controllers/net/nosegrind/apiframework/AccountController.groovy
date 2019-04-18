@@ -6,7 +6,7 @@ class AccountController {
 	def springSecurityService
 
 
-	LinkedHashMap create(){
+	HashMap create(){
 		try{
 			Account.withTransaction { status ->
 				Account acct = new Account(acctName: "${params.acctName}", enabled: true)
@@ -28,7 +28,7 @@ class AccountController {
 		}
 	}
 
-	LinkedHashMap get(){
+	HashMap get(){
 		try{
 			Account acct = Account.get(params?.id?.toLong())
 			return [account: acct]
@@ -37,7 +37,7 @@ class AccountController {
 		}
     }
 
-	LinkedHashMap delete() {
+	HashMap delete() {
 		try {
 			Account acct = Account.get(params.id?.toLong())
 			acct.delete(flush: true, failOnError: true)

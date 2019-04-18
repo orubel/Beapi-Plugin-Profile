@@ -11,16 +11,21 @@ grails:
             -'-XX:+CMSIncrementalPacing'
             -'-XX:CMSIncrementalDutyCycle=10'
             -'-XX:+UseParNewGC'
-            -'-XX:MaxGCPauseMillis=250'
-            -'-XX:MaxGCMinorPauseMillis=100'
+            -'-XX:MaxGCPauseMillis=200'
+            -'-XX:MaxGCMinorPauseMillis=10'
             -'-server'
+            -'-noverify'
+            -'-Xshare:off'
+            -'-Djava.net.preferIPv4Stack=true'
+            -'-XX:+EliminateLocks'
+            -'-XX:+UseBiasedLocking'
+
 
 ---
 environments:
     test:
         webhookActive: false
         apiThrottle: false
-        postProcess: false
         iostate:
             preloadDir: '.beapi/.iostate'
             archInstanceUrls:
@@ -31,10 +36,11 @@ environments:
             port: 8080
         grails:
             serverURL: "http://test.yourdomain.net:8080" #changeit
+        quartz:
+            pluginEnabled: false
     development:
         webhookActive: false
         apiThrottle: false
-        postProcess: false
         iostate:
             preloadDir: '.beapi/.iostate'
             archInstanceUrls:
@@ -48,7 +54,6 @@ environments:
     production:
         webhookActive: false
         apiThrottle: false
-        postProcess: false
         iostate:
             preloadDir: '.beapi/.iostate'
             archInstanceUrls:
@@ -63,8 +68,10 @@ environments:
 ---
 server:
     tomcat:
-        backgroundProcessorDelay: 10
-        maxThreads: 500
+        backgroundProcessorDelay: 5
+        maxThreads: 400
+        minSpareThreads: 100
+        maxConnections: 100000
         uriEncoding: UTF-8
         compression: off
         compressableMimeTypes: application/json,text/json,application/xml,text/xml,text/plain
