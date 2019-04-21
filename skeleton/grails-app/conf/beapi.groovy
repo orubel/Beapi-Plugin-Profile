@@ -79,7 +79,7 @@ grails.plugin.springsecurity.filterChain.chainMap = [
 		[pattern: "/login/**", filters: 'corsSecurityFilter,restAuthenticationFilter'],
 		[pattern: "/logout/**", filters: 'corsSecurityFilter,restAuthenticationFilter'],
 		[pattern: "/api/login", filters: 'corsSecurityFilter,restAuthenticationFilter'],
-		[pattern: "/api/**", filters: 'restAuthenticationFilter'],
+		[pattern: "/api/logout", filters: 'corsSecurityFilter,restAuthenticationFilter'],
 		[pattern: "/**", filters: 'corsSecurityFilter,tokenCacheValidationFilter,contentTypeMarshallerFilter,restAuthenticationFilter']
 ]
 

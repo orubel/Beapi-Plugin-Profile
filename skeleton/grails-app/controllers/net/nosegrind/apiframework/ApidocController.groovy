@@ -25,12 +25,16 @@ class ApidocController {
 				cache[version].each() { k, v ->
 
 					if (!['deprecated', 'defaultAction','currentStable'].contains(k)) {
-						if(!docs["${it}"] && (cache[version][k]['roles'].contains(authority) || cache[version][k]['roles'].contains('permitAll'))){
-							docs["${it}"] = v['doc']
+						if(cache[version][k]['roles'].contains(authority) || cache[version][k]['roles'].contains('permitAll')) {
+							if (!docs["${it}"]){ // avoid duplicates
+								docs["${it}"] = [:]
+							}
+
+							docs["${it}"]["${k}"] = v['doc']
 						}
 					}
-				}
 
+				}
 			}
 		}
 
