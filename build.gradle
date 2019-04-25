@@ -12,7 +12,7 @@ apply plugin: "org.grails.grails-profile"
 apply plugin: "org.grails.grails-profile-publish"
 
 group 'org.grails.profiles'
-version '1.1.2'
+version '1.1.3'
 
 grailsPublish {
     user = System.getenv('BINTRAY_USER')
@@ -22,7 +22,7 @@ grailsPublish {
         name = 'MIT'
     }
     title = "BeAPI API Framework"
-    desc = "BeAPI API Framework is a fully reactive plug-n-play API Framework for Distributed Architectures providing api abstraction, cached IO state, automated batching and more. It is meant to autmoate alot of the issues behind setting up and maintaining API's in distributed architectures as well as handling and simplifying automation."
+    desc = "BeAPI Framework is an 'Enterprise Ready' API Automation Framework. It implements the NEW API Pattern allowing for abstraction of the communication layer from the business logic layer thus improving scalability, speed and synchronization of I/O state in distributed systems as well as the ability to AUTOMATE ALL API CALLS AND PROCESSES."
     developers = [orubel:"Owen Rubel"]
 }
 

@@ -75,6 +75,26 @@ class ApidocFunctionalSpec extends Specification {
 
     }
 
+    // create using mockdata
+    void "CREATE guest role call"() {
+        setup:"api is called"
+            String METHOD = "POST"
+            String action = 'create'
+            String data = "{'personId': '${this.guestId}','roleId':'1'}"
+            def info
+            def proc = ["curl", "-H", "Content-Type: application/json", "-H", "Authorization: Bearer ${this.token}", "--request", "POST", "-d", "${data}", "${this.testDomain}/${this.appVersion}/personRole/create"].execute()
+            proc.waitFor()
+            def outputStream = new StringBuffer()
+            proc.waitForProcessOutput(outputStream, System.err)
+            String output = outputStream.toString()
+            info = new JsonSlurper().parseText(output)
+        when:"info is not null"
+            assert info!=null
+        then:"created user"
+            assert info['roleId'] != null
+
+    }
+
     void "GUEST login and get token"(){
         setup:"logging in"
             String login = Holders.grailsApplication.config.root.login
@@ -134,7 +154,23 @@ class ApidocFunctionalSpec extends Specification {
     }
 
     // create using mockdata
-    void "DELETE guest id:"() {
+    void "DELETE Guest Role:"() {
+        setup:"api is called"
+            String METHOD = "DELETE"
+            LinkedHashMap info = [:]
+            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/personRole/delete?personId=${this.guestId}"].execute()
+            proc.waitFor()
+            def outputStream = new StringBuffer()
+            proc.waitForProcessOutput(outputStream, System.err)
+            String output = outputStream.toString()
+            info = new JsonSlurper().parseText(output)
+        when:"info is not null"
+            assert info!=null
+        then:"delete created user"
+            assert this.guestId == info.personId
+    }
+
+    void "DELETE guest:"() {
         setup:"api is called"
             String METHOD = "DELETE"
             LinkedHashMap info = [:]
@@ -150,8 +186,6 @@ class ApidocFunctionalSpec extends Specification {
         then:"delete created user"
             assert this.guestId == info.id
     }
-
-
 
 }
 

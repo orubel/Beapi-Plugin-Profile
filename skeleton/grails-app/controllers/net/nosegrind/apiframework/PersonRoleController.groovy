@@ -1,0 +1,72 @@
+package net.nosegrind.apiframework
+
+class PersonRoleController{
+
+
+	LinkedHashMap create(){
+		try{
+			PersonRole role = new PersonRole(person:"${params.personId}",role:"${params.roleId}")
+
+			if(role){
+				if(!role.save(flush:true,failOnError:true)){
+					role.errors.allErrors.each { println(it) }
+				}
+				return [personrole:role]
+			}else{
+				render(status: 500,text:"Bad data sent. Could not complete transaction.")
+			}
+		}catch(Exception e){
+			throw new Exception("[PersonRoleController : get] : Exception - full stack trace follows:",e)
+		}
+	}
+
+	LinkedHashMap showByPerson(){
+		try{
+			PersonRole role = new PersonRole()
+			role = PersonRole.findByPerson(params?.personId?.toLong())
+
+			if(role){
+				return [personrole:role]
+			}else{
+				render(status: 500,text:"Id does not match record in database.")
+			}
+		}catch(Exception e){
+			throw new Exception("[PersonRoleController : get] : Exception - full stack trace follows:",e)
+		}
+	}
+
+	LinkedHashMap showByRole(){
+		try{
+			PersonRole role = new PersonRole()
+			role = PersonRole.findByRole(params?.roleId?.toLong())
+
+			if(role){
+				return [personrole:role]
+			}else{
+				render(status: 500,text:"Id does not match record in database.")
+			}
+		}catch(Exception e){
+			throw new Exception("[PersonRoleController : get] : Exception - full stack trace follows:",e)
+		}
+	}
+
+	LinkedHashMap delete() {
+		PersonRole role
+		try {
+			Person person = Person.get(params.personId)
+			if (person) {
+				role = PersonRole.findByPerson(person)
+				if (role) {
+					role.delete(flush: true, failOnError: true)
+					return [personRole: [personId: params.personId.toLong()]]
+				} else {
+					render(status: 500, text: "No roles exists for given ID of '" +  params.personId + "' in database.")
+				}
+			}else{
+				render(status: 500, text: "Id " + params.personId + " does not match record in database.")
+			}
+		}catch(Exception e){
+			throw new Exception("[PersonRoleController : delete] : Exception - full stack trace follows:",e)
+		}
+	}
+}
