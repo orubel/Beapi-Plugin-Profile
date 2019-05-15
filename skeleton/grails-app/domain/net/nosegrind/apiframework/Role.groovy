@@ -3,6 +3,8 @@ package net.nosegrind.apiframework
 //@ToString(includeNames = true, includeFields = true)
 class Role{
 
+	static transactional = true
+
 	String authority
 
 	static constraints = {

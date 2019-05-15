@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext
 
 class Person implements Serializable{
 
-
+	static transactional = true
 	static transients = ['hasBeforeInsert','hasBeforeValidate','hasBeforeUpdate','springSecurityService']
 
 	transient hasBeforeInsert = false

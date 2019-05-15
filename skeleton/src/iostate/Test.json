@@ -17,6 +17,7 @@ net.nosegrind.IOState
 
 {
 	"NAME":"test",
+        "NETWORKGRP": "private",
 	"VALUES": {
 		"id": {
 			"key": "PRIMARY",
@@ -44,7 +45,6 @@ net.nosegrind.IOState
 					"METHOD":"GET",
 					"DESCRIPTION":"Show Test data",
 					"ROLES":{
-						"DEFAULT":["ROLE_ADMIN"],
 						"BATCH":["ROLE_ADMIN"],
 						"HOOK":["ROLE_ADMIN"]
 					},
@@ -59,7 +59,6 @@ net.nosegrind.IOState
 					"METHOD":"POST",
 					"DESCRIPTION":"Create new Test data",
 					"ROLES":{
-						"DEFAULT":["ROLE_ADMIN"],
 						"BATCH":["ROLE_ADMIN"],
 						"HOOK":["ROLE_ADMIN"]
 					},
@@ -74,7 +73,6 @@ net.nosegrind.IOState
 					"METHOD":"DELETE",
 					"DESCRIPTION":"Delete Test data",
 					"ROLES":{
-						"DEFAULT":["ROLE_ADMIN"],
 						"BATCH":["ROLE_ADMIN"],
 						"HOOK":["ROLE_ADMIN"]
 					},

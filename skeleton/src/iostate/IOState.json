@@ -1,5 +1,6 @@
 {
     "NAME":"iostate",
+    "NETWORKGRP": "private",
     "VALUES": {
         "name": {
             "type": "String",
@@ -50,28 +51,12 @@
 	"CURRENTSTABLE": "1",
 	"VERSION": {
 		"1": {
-			"DEFAULTACTION":"show",
-	        "URI": {
-	            "list": {
-	             	"METHOD":"GET",
-	            	"DESCRIPTION":"Show IOState",
-	            	"ROLES": {
-			    "DEFAULT":["ROLE_ADMIN","ROLE_ARCH"],
-	            	    "BATCH":["ROLE_ADMIN","ROLE_ARCH"]
-			},
-	                "REQUEST": {
-	                    "permitAll":[]
-	                },
-	                "RESPONSE": {
-	                	"permitAll":["name"]
-	                }
-	            },
+		    "DEFAULTACTION":"update",
 	            "update": {
 	            	"METHOD":"POST",
 	            	"DESCRIPTION":"Update IOState",
 	            	"ROLES": {
-			    "DEFAULT":["ROLE_ADMIN","ROLE_ARCH"],
-	            	    "BATCH":["ROLE_ADMIN","ROLE_ARCH"]
+	            	    "BATCH":["ROLE_ADMIN"]
 			},
 	                "REQUEST": {
 	                    "permitAll":["name"]

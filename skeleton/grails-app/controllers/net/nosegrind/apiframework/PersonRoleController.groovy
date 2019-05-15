@@ -58,7 +58,7 @@ class PersonRoleController{
 				role = PersonRole.findByPerson(person)
 				if (role) {
 					role.delete(flush: true, failOnError: true)
-					return [personRole: [personId: params.personId.toLong()]]
+					return [PersonRole: [personId: params.personId.toLong()]]
 				} else {
 					render(status: 500, text: "No roles exists for given ID of '" +  params.personId + "' in database.")
 				}

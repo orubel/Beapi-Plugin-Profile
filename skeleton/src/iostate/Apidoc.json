@@ -17,6 +17,7 @@ net.nosegrind.Hook
 	
 {
     "NAME":"apidoc",
+    "NETWORKGRP": "public",
     "VALUES": {
         "*": {"type": "String","description":"*","mockData":"null"
         }
@@ -31,7 +32,6 @@ net.nosegrind.Hook
 					"METHOD":"GET",
 					"DESCRIPTION":"Show ApiDocs",
 				    	"ROLES": {
-					    "DEFAULT":["permitAll"],
 				    	    "BATCH":[]
 					},
 					"REQUEST": {

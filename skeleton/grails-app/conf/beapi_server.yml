@@ -12,7 +12,7 @@ grails:
             -'-XX:CMSIncrementalDutyCycle=10'
             -'-XX:+UseParNewGC'
             -'-XX:MaxGCPauseMillis=200'
-            -'-XX:MaxGCMinorPauseMillis=10'
+            -'-XX:MaxGCMinorPauseMillis=50'
             -'-server'
             -'-noverify'
             -'-Xshare:off'

@@ -17,6 +17,7 @@ net.nosegrind.IOState
 	
 {
     "NAME":"personRole",
+    "NETWORKGRP": "public",
     "VALUES": {
         "personId": {
             "key": "FOREIGN",
@@ -45,7 +46,6 @@ net.nosegrind.IOState
 			     	"METHOD":"POST",
 			    	"DESCRIPTION":"Create new PersonRole",
 			    	"ROLES":{
-				    "DEFAULT":["ROLE_ADMIN"],
 				    "BATCH":["ROLE_ADMIN"],
 				    "HOOK":["ROLE_ADMIN"]
 				},
@@ -60,7 +60,6 @@ net.nosegrind.IOState
 			     	"METHOD":"GET",
 			    	"DESCRIPTION":"Get Person by ID",
 			    	"ROLES":{
-				    "DEFAULT":["ROLE_ADMIN"],
 				    "BATCH":["ROLE_ADMIN"],
 				    "HOOK":["ROLE_ADMIN"]
 				},
@@ -75,7 +74,6 @@ net.nosegrind.IOState
 			     	"METHOD":"GET",
 			    	"DESCRIPTION":"Get Person by ID",
 			    	"ROLES":{
-				    "DEFAULT":["ROLE_ADMIN"],
 				    "BATCH":["ROLE_ADMIN"],
 				    "HOOK":["ROLE_ADMIN"]
 				},
@@ -90,7 +88,6 @@ net.nosegrind.IOState
 			     	"METHOD":"DELETE",
 			    	"DESCRIPTION":"Delete Person Roles",
 			    	"ROLES":{
-				    "DEFAULT":["ROLE_ADMIN"],
 				    "BATCH":["ROLE_ADMIN"],
 				    "HOOK":["ROLE_ADMIN"]
 				},

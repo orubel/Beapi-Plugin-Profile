@@ -14,6 +14,8 @@ import org.springframework.context.ApplicationContext
 import net.nosegrind.apiframework.ApiCacheService
 import grails.util.Metadata
 
+import net.nosegrind.apiframework.Person
+
 
 /**
  * See http://www.gebish.org/manual/current/ for more instructions
@@ -27,14 +29,19 @@ class ApiFunctionalSpec extends Specification {
     ApplicationContext applicationContext
 
     @Shared String token
+    @Shared String guestToken
     @Shared List authorities = ['permitAll']
-    @Shared String controller = 'person'
-    @Shared String testDomain = 'http://localhost:8080'
+    @Shared String testDomain
     @Shared String currentId
+    @Shared String guestId
     @Shared String appVersion = "v${Metadata.current.getProperty(Metadata.APPLICATION_VERSION, String.class)}"
+    @Shared String guestdata = "{'username': 'apitest','password':'testamundo','email':'api@guesttest.com'}"
+    @Shared String guestlogin = 'apitest'
+    @Shared String guestpassword = 'testamundo'
 
     void "login and get token"(){
         setup:"logging in"
+            this.testDomain = Holders.grailsApplication.config.environments.test.grails.serverURL
             String login = Holders.grailsApplication.config.root.login
             String password = Holders.grailsApplication.config.root.password
             String loginUri = Holders.grailsApplication.config.grails.plugin.springsecurity.rest.login.endpointUrl
@@ -54,32 +61,23 @@ class ApiFunctionalSpec extends Specification {
     }
 
     // create using mockdata
-    void "CREATE api call"() {
+    void "CREATE user"() {
         setup:"api is called"
             String METHOD = "POST"
-
+            String controller = 'person'
+            String action = 'create'
             ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
-            LinkedHashMap cache = apiCacheService.getApiCache(this.controller)
+            LinkedHashMap cache = apiCacheService.getApiCache(controller)
             Integer version = cache['cacheversion']
 
-            String action = 'create'
-            String data = "{"
-            cache?."${version}"?."${action}".receives.each(){ k,v ->
-                v.each(){
-                    data += "'"+it.name+"': '"+it.mockData+"',"
-                }
-            }
-            data += "}"
-        
             def info
 
-            def proc = ["curl", "-H", "Content-Type: application/json", "-H", "Authorization: Bearer ${this.token}", "--request", "${METHOD}", "-d", "${data}", "${this.testDomain}/${this.appVersion}/${this.controller}/${action}"].execute();
+            def proc = ["curl", "-H", "Content-Type: application/json", "-H", "Authorization: Bearer ${this.token}", "--request", "${METHOD}", "-d", "${this.guestdata}", "${this.testDomain}/${this.appVersion}/${controller}/${action}"].execute();
 
             proc.waitFor()
             def outputStream = new StringBuffer()
             proc.waitForProcessOutput(outputStream, System.err)
             String output = outputStream.toString()
-
 
             info = new JsonSlurper().parseText(output)
 
@@ -90,143 +88,68 @@ class ApiFunctionalSpec extends Specification {
                 assert this.authorities.contains(k)
                 v.each(){
                     if(it.keyType=='PRIMARY'){
-                        this.currentId = info."${it.name}"
+                        this.guestId = info."${it.name}"
                     }
                     assert info."${it.name}" != null
                 }
             }
     }
 
-    /**
-     * Bad Calls
-     */
-    void "Testing checkRequestMethod with Bad Variables"() {
+    // create using mockdata
+    void "CREATE user with role"() {
         setup:"api is called"
-            String METHOD = "POST"
-            LinkedHashMap info = [:]
-            ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
-            LinkedHashMap cache = apiCacheService.getApiCache(this.controller)
+        String METHOD = "POST"
+        String controller = 'personRole'
+        String action = 'create'
+        String data = "{'personId': '${this.guestId}','roleId':'1'}"
+        def info
+        def proc = ["curl", "-H", "Content-Type: application/json", "-H", "Authorization: Bearer ${this.token}", "--request", "${METHOD}", "-d", "${data}", "${this.testDomain}/${this.appVersion}/${controller}/${action}"].execute()
+        proc.waitFor()
+        def outputStream = new StringBuffer()
+        proc.waitForProcessOutput(outputStream, System.err)
+        String output = outputStream.toString()
+        info = new JsonSlurper().parseText(output)
+        when:"info is not null"
+        assert info!=null
+        then:"created user"
+        assert info['roleId'] != null
 
-            Integer version = cache['cacheversion']
-            String action = 'show'
-            //String pkey = cache?."${version}"?."${action}".pkey[0]
-
-            def proc = ["curl","-v","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${this.controller}/show?id=${this.currentId}"].execute();
-            proc.waitFor()
-            def outputStream = new StringBuffer()
-            def error = new StringWriter()
-            proc.waitForProcessOutput(outputStream, error)
-
-            ArrayList stdErr = error.toString().split( '> \n' )
-            ArrayList response1 = stdErr[0].split("> ")
-            ArrayList response2 = stdErr[1].split("< ")
-
-            String method
-
-            response2.each(){
-                def temp = it.split(' ')
-                switch(temp[0]){
-                    case 'HTTP/1.1':
-                        method = temp[1]
-                        break
-                }
-            }
-
-        when:"all values returned"
-            assert outputStream.toString()==""
-        then:"bad method sent"
-            assert method == '400'
     }
 
-    void "Testing checkURIDefinitions with Bad Variables"() {
-        setup:"api is called"
-            String METHOD = "GET"
-            LinkedHashMap info = [:]
-            ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
-            LinkedHashMap cache = apiCacheService.getApiCache(this.controller)
+    void "GUEST login and get token"(){
+        String METHOD = "POST"
 
-            Integer version = cache['cacheversion']
-            String action = 'show'
-            String data = "{'fred': 'flintstone'}"
+        setup:"logging in"
+        String loginUri = Holders.grailsApplication.config.grails.plugin.springsecurity.rest.login.endpointUrl
 
-            def proc = ["curl","-v","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}", "-d", "${data}","${this.testDomain}/${this.appVersion}/${this.controller}/show?id=${this.currentId}"].execute();
-            proc.waitFor()
-            def outputStream = new StringBuffer()
-            def error = new StringWriter()
-            proc.waitForProcessOutput(outputStream, error)
+        String url = "curl -H 'Content-Type: application/json' -X ${METHOD} -d '{\"username\":\"${this.guestlogin}\",\"password\":\"${this.guestpassword}\"}' ${this.testDomain}${loginUri}"
+        def proc = ['bash','-c',url].execute()
+        proc.waitFor()
+        def info = new JsonSlurper().parseText(proc.text)
 
-            ArrayList stdErr = error.toString().split( '> \n' )
-            ArrayList response1 = stdErr[0].split("> ")
-            ArrayList response2 = stdErr[1].split("< ")
-
-            String method
-
-            response2.each(){
-                def temp = it.split(' ')
-                switch(temp[0]){
-                    case 'HTTP/1.1':
-                        method = temp[1]
-                        break
-                }
-            }
-        when:"all values returned"
-            assert outputStream.toString()==""
-        then:"bad method sent"
-            assert method == '400'
+        when:"set token"
+        this.guestToken = info.access_token
+        then:"has bearer token"
+        assert info.token_type == 'Bearer'
     }
-
-    void "Testing Bad Token with Bad Variables"() {
-        setup:"api is called"
-            String METHOD = "GET"
-            LinkedHashMap info = [:]
-            ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
-            LinkedHashMap cache = apiCacheService.getApiCache(this.controller)
-
-            Integer version = cache['cacheversion']
-            String action = 'show'
-
-            def proc = ["curl","-v","-H","Content-Type: application/json","-H","Authorization: Bearer 1234567890","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${this.controller}/show?id=${this.currentId}"].execute();
-            proc.waitFor()
-            def outputStream = new StringBuffer()
-            def error = new StringWriter()
-            proc.waitForProcessOutput(outputStream, error)
-
-            ArrayList stdErr = error.toString().split( '> \n' )
-            ArrayList response1 = stdErr[0].split("> ")
-            ArrayList response2 = stdErr[1].split("< ")
-
-            String method
-            response2.each(){
-                def temp = it.split(' ')
-                switch(temp[0]){
-                    case 'HTTP/1.1':
-                        method = temp[1]
-                        break
-                }
-            }
-        when:"all values returned"
-            assert outputStream.toString()==""
-        then:"bad method sent"
-            assert method == '401'
-    }
-
-    // test checkAuth
 
     /**
-     * Regular Calls
+     * TODO: output errors for this
      */
     void "GET api call: [domain object]"() {
         setup:"api is called"
             String METHOD = "GET"
+            String controller = 'person'
+            String action = 'show'
             LinkedHashMap info = [:]
             ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
-            LinkedHashMap cache = apiCacheService.getApiCache(this.controller)
 
+            LinkedHashMap cache = apiCacheService.getApiCache(controller)
             Integer version = cache['cacheversion']
-            String action = 'show'
+
             //String pkey = cache?."${version}"?."${action}".pkey[0]
 
-            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${this.controller}/show?id=${this.currentId}"].execute();
+            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${controller}/${action}?id=${this.guestId}"].execute();
             proc.waitFor()
             def outputStream = new StringBuffer()
             proc.waitForProcessOutput(outputStream, System.err)
@@ -247,58 +170,66 @@ class ApiFunctionalSpec extends Specification {
             }
     }
 
+    /**
+     * TODO: output errors for this
+     */
     void "GET api call with version: [domain object]"() {
         setup:"api is called"
-        String METHOD = "GET"
-        LinkedHashMap info = [:]
-        ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
-        LinkedHashMap cache = apiCacheService.getApiCache(this.controller)
+            String METHOD = "GET"
+            String controller = 'person'
+            String action = 'show'
+            LinkedHashMap info = [:]
+            ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
 
-        Integer version = cache['cacheversion']
-        String action = 'show'
-        //String pkey = cache?."${version}"?."${action}".pkey[0]
+            LinkedHashMap cache = apiCacheService.getApiCache(controller)
+            Integer version = cache['cacheversion']
+            //String pkey = cache?."${version}"?."${action}".pkey[0]
 
-        def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}-1/${this.controller}/show?id=${this.currentId}"].execute();
-        proc.waitFor()
-        def outputStream = new StringBuffer()
-        proc.waitForProcessOutput(outputStream, System.err)
-        String output = outputStream.toString()
+            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}-1/${controller}/${action}?id=${this.guestId}"].execute();
+            proc.waitFor()
+            def outputStream = new StringBuffer()
+            proc.waitForProcessOutput(outputStream, System.err)
+            String output = outputStream.toString()
 
-        def slurper = new JsonSlurper()
-        slurper.parseText(output).each(){ k,v ->
-            info[k] = v
-        }
-        when:"info is not null"
-        assert info!=[:]
-        then:"get user"
-        cache?."${version}"?."${action}".returns.each(){ k,v ->
-            assert this.authorities.contains(k)
-            v.each(){ it ->
-                assert info."${it.name}" != null
+            def slurper = new JsonSlurper()
+            slurper.parseText(output).each(){ k,v ->
+                info[k] = v
             }
-        }
+        when:"info is not null"
+            assert info!=[:]
+        then:"get user"
+            cache?."${version}"?."${action}".returns.each(){ k,v ->
+                assert this.authorities.contains(k)
+                v.each(){ it ->
+                    assert info."${it.name}" != null
+                }
+            }
     }
 
     // test list of domain objects
     void "GET list api call: [list of domain objects]"() {
         setup:"api is called"
             String METHOD = "GET"
+            String controller = 'person'
+            String action = 'list'
             LinkedHashMap info = [:]
             ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
-            LinkedHashMap cache = apiCacheService.getApiCache(this.controller)
 
-            Integer version = cache['cacheversion']
-
-            String action = 'show'
-
+            //LinkedHashMap cache = apiCacheService.getApiCache(controller)
+            //Integer version = cache['cacheversion']
             //String pkey = cache?."${version}"?."${action}".pkey[0]
 
-            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${this.controller}/list"].execute();
+            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${controller}/${action}"].execute();
             proc.waitFor()
             def outputStream = new StringBuffer()
-            proc.waitForProcessOutput(outputStream, System.err)
+            def error = new StringWriter()
+            proc.waitForProcessOutput(outputStream, error)
             String output = outputStream.toString()
 
+            //ArrayList stdErr = error.toString().split( '> \n' )
+            //ArrayList response1 = stdErr[0].split("> ")
+            //ArrayList response2 = stdErr[1].split("< ")
+        
             def slurper = new JsonSlurper()
             slurper.parseText(output).each(){ k,v ->
                 info[k] = v
@@ -313,19 +244,19 @@ class ApiFunctionalSpec extends Specification {
     void "DELETE api call: [map]"() {
         setup:"api is called"
             String METHOD = "DELETE"
+            String controller = 'person'
+            String action = 'delete'
             LinkedHashMap info = [:]
             ApiCacheService apiCacheService = applicationContext.getBean("apiCacheService")
-            LinkedHashMap cache = apiCacheService.getApiCache(this.controller)
+            LinkedHashMap cache = apiCacheService.getApiCache(controller)
 
             Integer version = cache['cacheversion']
 
-            String action = 'delete'
-            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${this.controller}/delete?id=${this.currentId}"].execute();
+            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${controller}/${action}?id=${this.guestId}"].execute();
             proc.waitFor()
             def outputStream = new StringBuffer()
             proc.waitForProcessOutput(outputStream, System.err)
             String output = outputStream.toString()
-
             def slurper = new JsonSlurper()
             slurper.parseText(output).each(){ k,v ->
                 info[k] = v
@@ -343,7 +274,7 @@ class ApiFunctionalSpec extends Specification {
 
                 }
             }
-            assert this.currentId == id
+            assert this.guestId == id
     }
 
 

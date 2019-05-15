@@ -33,6 +33,6 @@ class IostateController {
 
 
 	protected boolean isSuperuser() {
-		springSecurityService.principal.authorities*.authority.any { grailsApplication.config.apitoolkit.admin.roles.contains(it) }
+		springSecurityService.principal.authorities*.authority.contains('ROLE_ADMIN')
 	}
 }

@@ -17,6 +17,7 @@ net.nosegrind.IOState
 	
 {
     "NAME":"role",
+    "NETWORKGRP": "public",
     "VALUES": {
         "id": {
             "key": "PRIMARY",
@@ -44,7 +45,6 @@ net.nosegrind.IOState
 			     	"METHOD":"POST",
 			    	"DESCRIPTION":"Create new Role",
 			    	"ROLES":{
-				    "DEFAULT":["ROLE_ADMIN"],
 				    "BATCH":["ROLE_ADMIN"],
 				    "HOOK":["ROLE_ADMIN"]
 				},
@@ -59,7 +59,6 @@ net.nosegrind.IOState
 			     	"METHOD":"GET",
 			    	"DESCRIPTION":"List all Event Types",
 			    	"ROLES":{
-				    "DEFAULT":["ROLE_ADMIN"],
 				    "BATCH":["ROLE_ADMIN"],
 				    "HOOK":["ROLE_ADMIN"]
 				},
@@ -74,7 +73,6 @@ net.nosegrind.IOState
 			     	"METHOD":"DELETE",
 			    	"DESCRIPTION":"Delete Person",
 			    	"ROLES":{
-				    "DEFAULT":["ROLE_ADMIN"],
 				    "BATCH":["ROLE_ADMIN"],
 				    "HOOK":["ROLE_ADMIN"]
 				},

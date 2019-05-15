@@ -17,6 +17,7 @@ net.nosegrind.IOState
 	
 {
     "NAME":"stat",
+    "NETWORKGRP": "private",
     "VALUES": {
 	"type": {
             "type": "Long",
@@ -48,7 +49,6 @@ net.nosegrind.IOState
 			     	"METHOD":"GET",
 			    	"DESCRIPTION":"Retrieve statistics for API's",
 			    	"ROLES":{
-				    "DEFAULT":["ROLE_ADMIN","ROLE_USER"],
 				    "BATCH":["ROLE_ADMIN"],
 				    "HOOK":["ROLE_ADMIN"]
 				},

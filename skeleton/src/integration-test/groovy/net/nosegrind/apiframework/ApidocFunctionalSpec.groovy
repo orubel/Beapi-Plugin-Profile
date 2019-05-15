@@ -14,6 +14,8 @@ import spock.lang.*
 import static groovyx.net.http.ContentType.*
 import static groovyx.net.http.Method.*
 
+import net.nosegrind.apiframework.Person
+
 /**
  * See http://www.gebish.org/manual/current/ for more instructions
  */
@@ -28,22 +30,33 @@ class ApidocFunctionalSpec extends Specification {
     @Shared String token
     @Shared String guestToken
     @Shared List authorities = ['permitAll']
-    @Shared String controller = 'apidoc'
-    @Shared String testDomain = 'http://localhost:8080'
+    @Shared String testDomain
     @Shared String currentId
     @Shared String guestId
     @Shared String appVersion = "v${Metadata.current.getProperty(Metadata.APPLICATION_VERSION, String.class)}"
+    @Shared String guestdata = "{'username': 'apidoctest','password':'testamundo','email':'apidoc@guesttest.com'}"
+    @Shared String guestlogin = 'apidoctest'
+    @Shared String guestpassword = 'testamundo'
 
     void "login and get token"(){
         setup:"logging in"
+            String METHOD = "POST"
+            this.testDomain = Holders.grailsApplication.config.environments.test.grails.serverURL
             String login = Holders.grailsApplication.config.root.login
             String password = Holders.grailsApplication.config.root.password
             String loginUri = Holders.grailsApplication.config.grails.plugin.springsecurity.rest.login.endpointUrl
-
-            String url = "curl -H 'Content-Type: application/json' -X POST -d '{\"username\":\"${login}\",\"password\":\"${password}\"}' ${this.testDomain}${loginUri}"
-            def proc = ['bash','-c',url].execute()
+            def proc = ["curl","-H","Origin: http://localhost","-H","Access-Control-Request-Headers: Origin,X-Requested-With","-H", "Content-Type: application/json","--request","${METHOD}", "-d", "{\"username\":\"${login}\",\"password\":\"${password}\"}", "${this.testDomain}${loginUri}"].execute()
             proc.waitFor()
-            def info = new JsonSlurper().parseText(proc.text)
+            def outputStream = new StringBuffer()
+            def error = new StringWriter()
+            proc.waitForProcessOutput(outputStream, error)
+            String output = outputStream.toString()
+
+            //ArrayList stdErr = error.toString().split( '> \n' )
+            //ArrayList response1 = stdErr[0].split("> ")
+            //ArrayList response2 = stdErr[1].split("< ")
+
+            def info = new JsonSlurper().parseText(output)
 
         when:"set token"
             this.token = info.access_token
@@ -54,19 +67,17 @@ class ApidocFunctionalSpec extends Specification {
             assert info.token_type == 'Bearer'
     }
 
-    // create using mockdata
     void "CREATE guest id call"() {
         setup:"api is called"
             String METHOD = "POST"
+            String controller = 'person'
             String action = 'create'
-            String data = "{'username': 'guesttest','password':'testamundo','email':'guest@guesttest.com'}"
-            def info
-            def proc = ["curl", "-H", "Content-Type: application/json", "-H", "Authorization: Bearer ${this.token}", "--request", "POST", "-d", "${data}", "${this.testDomain}/${this.appVersion}/person/create"].execute()
+            def proc = ["curl","-H","Origin: http://localhost","-H","Access-Control-Request-Headers: Origin,X-Requested-With","-H", "Content-Type: application/json", "-H", "Authorization: Bearer ${this.token}","--request","${METHOD}", "--verbose", "-d", "${this.guestdata}", "${this.testDomain}/${this.appVersion}/${controller}/${action}"].execute()
             proc.waitFor()
             def outputStream = new StringBuffer()
             proc.waitForProcessOutput(outputStream, System.err)
             String output = outputStream.toString()
-            info = new JsonSlurper().parseText(output)
+            def info = new JsonSlurper().parseText(output)
         when:"info is not null"
             this.guestId = info['id']
             assert info!=null
@@ -79,15 +90,15 @@ class ApidocFunctionalSpec extends Specification {
     void "CREATE guest role call"() {
         setup:"api is called"
             String METHOD = "POST"
+            String controller = 'personRole'
             String action = 'create'
             String data = "{'personId': '${this.guestId}','roleId':'1'}"
-            def info
-            def proc = ["curl", "-H", "Content-Type: application/json", "-H", "Authorization: Bearer ${this.token}", "--request", "POST", "-d", "${data}", "${this.testDomain}/${this.appVersion}/personRole/create"].execute()
+            def proc = ["curl","-H","Origin: http://localhost","-H","Access-Control-Request-Headers: Origin,X-Requested-With","--request","${METHOD}","-H", "Content-Type: application/json", "-H", "Authorization: Bearer ${this.token}", "-d", "${data}", "${this.testDomain}/${this.appVersion}/${controller}/${action}"].execute()
             proc.waitFor()
             def outputStream = new StringBuffer()
             proc.waitForProcessOutput(outputStream, System.err)
             String output = outputStream.toString()
-            info = new JsonSlurper().parseText(output)
+            def info = new JsonSlurper().parseText(output)
         when:"info is not null"
             assert info!=null
         then:"created user"
@@ -97,12 +108,10 @@ class ApidocFunctionalSpec extends Specification {
 
     void "GUEST login and get token"(){
         setup:"logging in"
-            String login = Holders.grailsApplication.config.root.login
-            String password = Holders.grailsApplication.config.root.password
             String loginUri = Holders.grailsApplication.config.grails.plugin.springsecurity.rest.login.endpointUrl
 
-            String url = "curl -H 'Content-Type: application/json' -X POST -d '{\"username\":\"guesttest\",\"password\":\"testamundo\"}' ${this.testDomain}${loginUri}"
-            def proc = ['bash','-c',url].execute();
+            String url = "curl -H 'Content-Type: application/json' -X POST -d '{\"username\":\"${this.guestlogin}\",\"password\":\"${this.guestpassword}\"}' ${this.testDomain}${loginUri}"
+            def proc = ['bash','-c',url].execute()
             proc.waitFor()
             def info = new JsonSlurper().parseText(proc.text)
 
@@ -115,13 +124,15 @@ class ApidocFunctionalSpec extends Specification {
     void "GET admin apidoc"() {
         setup:"apidoc is called"
             String METHOD = "GET"
+            String controller = 'apidoc'
             String action = 'show'
             def info = [:]
-            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${this.controller}/show"].execute()
+            def proc = ["curl","-H","Origin: http://localhost","-H","Access-Control-Request-Headers: Origin,X-Requested-With","--request","${METHOD}","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","${this.testDomain}/${this.appVersion}/${controller}/${action}"].execute()
             proc.waitFor()
             def outputStream = new StringBuffer()
             proc.waitForProcessOutput(outputStream, System.err)
             String output = outputStream.toString()
+
             def slurper = new JsonSlurper()
             slurper.parseText(output).each(){ k,v ->
                 info[k] = v
@@ -135,9 +146,10 @@ class ApidocFunctionalSpec extends Specification {
     void "GET guest apidoc"() {
         setup:"apidoc is called"
             String METHOD = "GET"
+            String controller = 'apidoc'
             String action = 'show'
             def info = [:]
-            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.guestToken}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/${this.controller}/show"].execute()
+            def proc = ["curl","-H","Origin: http://localhost","-H","Access-Control-Request-Headers: Origin,X-Requested-With","--request","${METHOD}","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.guestToken}","${this.testDomain}/${this.appVersion}/${controller}/${action}"].execute()
             proc.waitFor()
             def outputStream = new StringBuffer()
             proc.waitForProcessOutput(outputStream, System.err)
@@ -153,32 +165,25 @@ class ApidocFunctionalSpec extends Specification {
             assert info['apidoc']['stat']==null
     }
 
-    // create using mockdata
-    void "DELETE Guest Role:"() {
-        setup:"api is called"
-            String METHOD = "DELETE"
-            LinkedHashMap info = [:]
-            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/personRole/delete?personId=${this.guestId}"].execute()
-            proc.waitFor()
-            def outputStream = new StringBuffer()
-            proc.waitForProcessOutput(outputStream, System.err)
-            String output = outputStream.toString()
-            info = new JsonSlurper().parseText(output)
-        when:"info is not null"
-            assert info!=null
-        then:"delete created user"
-            assert this.guestId == info.personId
-    }
 
     void "DELETE guest:"() {
         setup:"api is called"
             String METHOD = "DELETE"
+            String controller = 'person'
+            String action = 'delete'
             LinkedHashMap info = [:]
-            def proc = ["curl","-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","--request","${METHOD}","${this.testDomain}/${this.appVersion}/person/delete?id=${this.guestId}"].execute()
+            def proc = ["curl","-H","Origin: http://localhost","-H","Access-Control-Request-Headers: Origin,X-Requested-With","--request","${METHOD}", "-H","Content-Type: application/json","-H","Authorization: Bearer ${this.token}","${this.testDomain}/${this.appVersion}/${controller}/${action}?id=${this.guestId}"].execute()
             proc.waitFor()
             def outputStream = new StringBuffer()
-            proc.waitForProcessOutput(outputStream, System.err)
+            def error = new StringWriter()
+            proc.waitForProcessOutput(outputStream, error)
             String output = outputStream.toString()
+
+        ArrayList stdErr = error.toString().split( '> \n' )
+        println(stdErr)
+        //ArrayList response1 = stdErr[0].split("> ")
+        //ArrayList response2 = stdErr[1].split("< ")
+
 
             info = new JsonSlurper().parseText(output)
         when:"info is not null"
