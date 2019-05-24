@@ -26,7 +26,7 @@ buildscript {
         classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
 
         // for installing local
-        classpath 'org.grails.plugins:api-framework:0.9.8.2'
+        classpath 'org.grails.plugins:api-framework:0.9.9'
     }
 }
 
@@ -96,7 +96,7 @@ dependencies {
     /**
      * API Block
      */
-    compile 'org.grails.plugins:api-framework:0.9.8.2'
+    compile 'org.grails.plugins:api-framework:0.9.9'
     //compile group: 'org.scribe', name: 'scribe', version: '1.3.7'
 
     /**

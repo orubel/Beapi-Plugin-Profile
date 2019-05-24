@@ -118,6 +118,6 @@ class HookController {
 	}
 
 	protected boolean isSuperuser() {
-		springSecurityService.principal.authorities*.authority.contains('ROLE_ADMIN')
+		springSecurityService.principal.authorities*.authority.any { grailsAccount.config.apitoolkit.admin.roles.contains(it) }
 	}
 }

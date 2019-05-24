@@ -17,9 +17,9 @@ environments:
             dialect: "org.hibernate.dialect.MySQL5InnoDBDialect"
             username: "root"
             password: "db_password"
-            # dbCreate: "create-drop"
             url: "jdbc:mysql://localhost:3306/testdb"
-            dbCreate: update
+            # dbCreate: update
+            dbCreate: create-drop
             properties:
                    jmxEnabled: true
                    initialSize: 5
@@ -46,9 +46,9 @@ environments:
             dialect: "org.hibernate.dialect.MySQL5InnoDBDialect"
             username: "root"
             password: "db_password"
-            # dbCreate: "create-drop"
             url: "jdbc:mysql://localhost:3306/testdb"
-            dbCreate: update
+            # dbCreate: update
+            dbCreate: create-drop
             properties:
                    jmxEnabled: true
                    initialSize: 5
@@ -75,9 +75,9 @@ environments:
             dialect: "org.hibernate.dialect.MySQL5InnoDBDialect"
             username: "root"
             password: "db_password"
-            # dbCreate: "create-drop"
             url: "jdbc:mysql://localhost:3306/testdb"
-            dbCreate: update
+            # dbCreate: update
+            dbCreate: create-drop
             properties:
                    jmxEnabled: true
                    initialSize: 5

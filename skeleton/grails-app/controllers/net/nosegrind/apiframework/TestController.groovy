@@ -52,6 +52,6 @@ class TestController {
     }
 
     protected boolean isSuperuser() {
-        springSecurityService.principal.authorities*.authority.any { grailsApplication.config.apitoolkit.admin.roles.contains(it) }
+        springSecurityService.principal.authorities*.authority.any { grailsAccount.config.apitoolkit.admin.roles.contains(it) }
     }
 }

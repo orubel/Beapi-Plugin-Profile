@@ -143,6 +143,7 @@ grails.plugin.springsecurity.logout.postOnly = false
 
 grails.plugin.springsecurity.useSecurityEventListener = false
 
+apitoolkit.admin.roles= ['ROLE_ROOT','ROLE_ADMIN','ROLE_ARCH']
 
 // Added by the Reactive API Framework plugin:
 //apitoolkit.attempts= 5

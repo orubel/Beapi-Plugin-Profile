@@ -175,6 +175,9 @@ class PersonController{
 	}
 
 	protected boolean isSuperuser() {
-		springSecurityService.principal.authorities*.authority.contains('ROLE_ADMIN')
+		springSecurityService.principal.authorities*.authority.any {
+			println(grailsApplication.config.apitoolkit.admin.roles)
+			((List)grailsApplication.config.apitoolkit.admin.roles).contains(it)
+		}
 	}
 }

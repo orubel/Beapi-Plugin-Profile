@@ -25,7 +25,7 @@ class ApidocController {
 				cache[version].each() { k, v ->
 
 					if (!['deprecated', 'defaultAction','currentStable'].contains(k)) {
-						if(cache[version][k]['roles'].contains(authority) || cache[version][k]['roles'].contains('permitAll')) {
+						if(checkAuth(cache[version][k]['roles']) || cache[version][k]['roles'].contains('permitAll')) {
 							if (!docs["${it}"]){ // avoid duplicates
 								docs["${it}"] = [:]
 							}
@@ -41,5 +41,8 @@ class ApidocController {
 		return ['apidoc':docs]
 	}
 
+	private boolean checkAuth(LinkedHashSet auths) {
+		springSecurityService.principal.authorities*.authority.any { auths.contains(it) }
+	}
 }
 
