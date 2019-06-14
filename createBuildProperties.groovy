@@ -17,3 +17,5 @@ props2.setProperty('version', profileVersion)
 props2.store(propsFile2.newWriter(), null)
 
 
+props.close()
+props2.close()
