@@ -9,13 +9,16 @@ def buildVersion = props.getProperty('buildVersion')
 def patchVersion = props.getProperty('patchVersion')
 def profileVersion = "${buildVersion}.${patchVersion}"
 
+println("BUILD:"+buildVersion)
+println("PATCH:"+patchVersion)
+println("PROFILE:"+profileVersion)
+
 Properties props2 = new Properties()
 def propsFile2 = new File("${userHome}/.jenkins/workspace/beapi-profile/gradle.properties")
 props2.load(propsFile2.newDataInputStream())
-
 props2.setProperty('version', profileVersion)
 props2.store(propsFile2.newWriter(), null)
 
 
-props.close()
-props2.close()
+//props.close()
+//props2.close()
