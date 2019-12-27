@@ -11,7 +11,7 @@ This builds the project in a localized maven repo that you can use on local buil
 Yopu can then build local projects like so:
 
 ```
-grails create-app <name of your app> --profile beapi
+grails create-app <name of your app> --profile beapi-profile
 ```
 
 This builds all necessary dependencies into your application. The only thing left is to follows direction for [configuration](http://orubel.github.io/Beapi-API-Framework/).
@@ -19,5 +19,5 @@ This builds all necessary dependencies into your application. The only thing lef
 This is also available from the grails profiles repo (without doing the build):
 
 ```
-grails create-app <name of your app> --profile org.grails.profiles:beapi:1.4.2
+grails create-app name_of_your_app --profile org.grails.profiles:beapi-profile:1.5.64
 ```
