@@ -21,3 +21,5 @@ This is also available from the grails profiles repo (without doing the build):
 ```
 grails create-app name_of_your_app --profile org.grails.profiles:beapi-profile:1.6.1
 ```
+
+If you are having issues, see the bintray profile here: https://bintray.com/beta/#/orubel/profiles/beapi-profile/1.6.1?tab=overview
