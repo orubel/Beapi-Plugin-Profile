@@ -19,5 +19,5 @@ This builds all necessary dependencies into your application. The only thing lef
 This is also available from the grails profiles repo (without doing the build):
 
 ```
-grails create-app name_of_your_app --profile org.grails.profiles:beapi-profile:1.5.64
+grails create-app name_of_your_app --profile org.grails.profiles:beapi-profile:1.6.1
 ```
