@@ -19,7 +19,7 @@ version = "${appVersion}"
 grailsPublish {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
-    githubSlug = 'orubel/Beapi-Plugin-Profile'
+    githubSlug = 'orubel/beapi-profile'
     license {
         name = 'MIT'
     }
